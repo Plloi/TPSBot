@@ -64,7 +64,6 @@ stages:
         command: 'build'
         arguments: '-a -o TPSBot'
       displayName: 'Build Go application'
-      workingDirectory: '$(modulePath)'
 
     - publish: '$(modulePath)/TPSBot'
       artifact: 'Executable'
@@ -75,14 +74,12 @@ stages:
       inputs:
         testResultsFormat: 'JUnit'
         testResultsFiles: '*report*.xml' 
-        searchFolder: '$(Build.SourcesDirectory)'
+        searchFolder: '$(modulePath)'
       displayName: 'Publish test results'
-      workingDirectory: '$(modulePath)'
 
     - task: PublishCodeCoverageResults@1
       condition: always()
       inputs:
         codeCoverageTool: 'Cobertura'
-        summaryFileLocation: '$(Build.SourcesDirectory)/test-coverage.xml'
+        summaryFileLocation: '$(modulePath)/test-coverage.xml'
       displayName: 'Publish code coverage results'
-      workingDirectory: '$(modulePath)'
