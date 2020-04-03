@@ -2,7 +2,7 @@ trigger:
 - master
 
 stages:
-- stage: 'Build Bot'
+- stage: 'BuildBot'
   displayName: 'Build and Test'
   variables:
     GOVERSION: '1.13.5'   # Version of Go tools used for building and testing
