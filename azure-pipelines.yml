@@ -35,7 +35,7 @@ stages:
       inputs:
         command: 'get'
         arguments: '-d'
-        workingDirectory: '$(System.DefaultWorkingDirectory)'
+        workingDirectory: '$(modulePath)'
       displayName: 'Get Project Dependancies'
     - script: |
         # Get tools for converting Go's test reports
@@ -56,7 +56,7 @@ stages:
           # Let script fail by writing to stderr
           >&2 echo "Tests failed"
         fi
-      workingDirectory: '$(System.DefaultWorkingDirectory)'
+      workingDirectory: '$(modulePath)'
       displayName: 'Run unit tests and convert results'
       failOnStderr: true
     - task: Go@0
@@ -64,8 +64,9 @@ stages:
         command: 'build'
         arguments: '-a -o TPSBot'
       displayName: 'Build Go application'
+      workingDirectory: '$(modulePath)'
 
-    - publish: '$(Build.SourcesDirectory)/TPSBot'
+    - publish: '$(modulePath)/TPSBot'
       artifact: 'Executable'
       displayName: 'Publish pipeline artifact'
 
@@ -76,6 +77,7 @@ stages:
         testResultsFiles: '*report*.xml' 
         searchFolder: '$(Build.SourcesDirectory)'
       displayName: 'Publish test results'
+      workingDirectory: '$(modulePath)'
 
     - task: PublishCodeCoverageResults@1
       condition: always()
@@ -83,3 +85,4 @@ stages:
         codeCoverageTool: 'Cobertura'
         summaryFileLocation: '$(Build.SourcesDirectory)/test-coverage.xml'
       displayName: 'Publish code coverage results'
+      workingDirectory: '$(modulePath)'
