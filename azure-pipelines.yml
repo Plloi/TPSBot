@@ -15,6 +15,12 @@ stages:
     pool:
       vmImage: 'Ubuntu 18.04'
     steps:
+    - task: Go@0
+      inputs:
+      command: 'get'
+      arguments: '-d'
+      workingDirectory: '$(System.DefaultWorkingDirectory)'
+      displayName: 'Get Project Dependancies'
     - task: GoTool@0
       inputs:
         version: $(GOVERSION)
@@ -25,9 +31,6 @@ stages:
         go get -u github.com/jstemmer/go-junit-report 2>&1
         go get -u github.com/axw/gocov/gocov 2>&1
         go get -u github.com/AlekSi/gocov-xml 2>&1
-        
-        # Get our dependancies
-        go get ./...
 
         # Run Go tests and turn output into JUnit test result format
         go test ./... -v -coverprofile=test-coverage.txt -covermode count 2>&1 | $HOME/go/bin/go-junit-report > test-report.xml
