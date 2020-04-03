@@ -5,7 +5,7 @@ stages:
 - stage: 'BuildBot'
   displayName: 'Build and Test'
   variables:
-    GOVERSION: '1.13.5'   # Version of Go tools used for building and testing
+    GOVERSION: 'latest'   # Version of Go tools used for building and testing
     CGO_ENABLED: '0'      # Disable cgo to get a static binary
     GOOS: 'linux'
     GOARCH: 'amd64'
