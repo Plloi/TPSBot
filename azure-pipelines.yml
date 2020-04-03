@@ -44,7 +44,7 @@ stages:
           # Let script fail by writing to stderr
           >&2 echo "Tests failed"
         fi
-      workingDirectory: '$(modulePath)'
+      workingDirectory: '$(System.DefaultWorkingDirectory)'
       displayName: 'Run unit tests and convert results'
       failOnStderr: true
     - task: Go@0
