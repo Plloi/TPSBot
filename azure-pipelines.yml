@@ -63,6 +63,7 @@ stages:
       inputs:
         command: 'build'
         arguments: '-a -o TPSBot'
+        workingDirectory: '$(modulePath)'
       displayName: 'Build Go application'
 
     - publish: '$(modulePath)/TPSBot'
