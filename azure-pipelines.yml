@@ -25,12 +25,18 @@ stages:
         go get -u github.com/jstemmer/go-junit-report 2>&1
         go get -u github.com/axw/gocov/gocov 2>&1
         go get -u github.com/AlekSi/gocov-xml 2>&1
+        
+        # Get our dependancies
+        go get ./...
+
         # Run Go tests and turn output into JUnit test result format
         go test ./... -v -coverprofile=test-coverage.txt -covermode count 2>&1 | $HOME/go/bin/go-junit-report > test-report.xml
         rc=${PIPESTATUS[0]} # Get result code of `go test`
+        
         # Convert coverage file into XML
         $HOME/go/bin/gocov convert test-coverage.txt > test-coverage.json
         $HOME/go/bin/gocov-xml < test-coverage.json > test-coverage.xml
+        
         # Check if `go test` had an error
         if [ $rc -ne 0 ]; then
           # Let script fail by writing to stderr
