@@ -44,12 +44,12 @@ stages:
         go get -u github.com/AlekSi/gocov-xml 2>&1
 
         # Run Go tests and turn output into JUnit test result format
-        go test ./turnips -v -coverprofile=test-coverage.txt -covermode count 2>&1 | $HOME/go/bin/go-junit-report > test-report.xml
+        go test ./turnips -v -coverprofile=test-coverage.txt -covermode count 2>&1 | $(GOPATH)/bin/go-junit-report > test-report.xml
         rc=${PIPESTATUS[0]} # Get result code of `go test`
         
         # Convert coverage file into XML
-        $HOME/go/bin/gocov convert test-coverage.txt > test-coverage.json
-        $HOME/go/bin/gocov-xml < test-coverage.json > test-coverage.xml
+        $(GOPATH)/bin/gocov convert test-coverage.txt > test-coverage.json
+        $(GOPATH)/bin/gocov-xml < test-coverage.json > test-coverage.xml
         
         # Check if `go test` had an error
         if [ $rc -ne 0 ]; then
