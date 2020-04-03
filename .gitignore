@@ -1,2 +1,8 @@
 #Turnip database folder
 turnipdb
+
+#Test Results
+test-coverage.json
+test-coverage.txt
+test-coverage.xml
+test-report.xml
