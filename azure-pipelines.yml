@@ -17,9 +17,9 @@ stages:
     steps:
     - task: Go@0
       inputs:
-      command: 'get'
-      arguments: '-d'
-      workingDirectory: '$(System.DefaultWorkingDirectory)'
+        command: 'get'
+        arguments: '-d'
+        workingDirectory: '$(System.DefaultWorkingDirectory)'
       displayName: 'Get Project Dependancies'
     - task: GoTool@0
       inputs:
