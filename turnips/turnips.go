@@ -82,7 +82,7 @@ func (tc *TurnipCommands) top5(s *discordgo.Session, m *discordgo.MessageCreate)
 		}
 
 		if price.Time.Weekday() == 0 {
-			selling = append(selling, price)
+			selling = append([]turnipPrice{price}, selling...)
 		} else {
 			buying = append(buying, price)
 		}
