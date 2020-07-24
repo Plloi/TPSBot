@@ -18,12 +18,14 @@ func notImplemented(s *discordgo.Session, m *discordgo.MessageCreate) {
 	s.ChannelMessageSend(m.ChannelID, "Command reserved, but not implemented")
 }
 
+// TurnipCommands Holds state form the Turnip Bot
 type TurnipCommands struct {
 	db     *scribble.Driver
 	prices []turnipPrice
 	debug  bool
 }
 
+// Setup produces a TurnipCommands and assigns it's functions to a router.CommndRouter
 func Setup(r *router.CommandRouter) {
 
 	dir := "./turnipdb/"
@@ -128,8 +130,6 @@ func (tc *TurnipCommands) addturnips(s *discordgo.Session, m *discordgo.MessageC
 	}
 	playertime := getOffsetTime(time.Now(), offset)
 
-	invalid := false
-
 	//Sunday
 	if playertime.Weekday() == 0 && playertime.Hour() >= 5 && playertime.Hour() <= 12 {
 		playertime = time.Date(playertime.Year(), playertime.Month(), playertime.Day(), 12, 0, 0, 0, playertime.Location())
@@ -143,10 +143,6 @@ func (tc *TurnipCommands) addturnips(s *discordgo.Session, m *discordgo.MessageC
 		playertime = time.Date(playertime.Year(), playertime.Month(), playertime.Day(), 22, 0, 0, 0, playertime.Location())
 		tc.debugLog(fmt.Sprintf("Weekday: %d, Hour: %d, Price: %d, Setting Hour: %d", playertime.Weekday(), playertime.Hour(), i, 20))
 	} else {
-		invalid = true
-	}
-
-	if invalid == true {
 		s.ChannelMessageSend(m.ChannelID, "Aren't you outside of a valid time?")
 		return
 	}
@@ -188,30 +184,12 @@ func (tc *TurnipCommands) settime(s *discordgo.Session, m *discordgo.MessageCrea
 	}
 	offset := hour - now.Hour()
 
-	testtime := time.Date(now.Year(), now.Month(), now.Day(), now.Hour()+offset, now.Minute(), now.Second(), now.Nanosecond(), now.Location())
-	day := 0
+	day, _ := daysOfWeek[matches[1]]
 
-	switch matches[1] {
-	case "monday":
-		day = 1
-	case "tuesday":
-		day = 2
-	case "wednesday":
-		day = 3
-	case "thursday":
-		day = 4
-	case "friday":
-		day = 5
-	case "saturday":
-		day = 6
+	days := day - now.Weekday()
+	fmt.Printf("Adjusting Day by %d Days.\n", days)
+	offset = int(days)*24 + offset
 
-	}
-
-	if testtime.Weekday() != time.Weekday(day) {
-		days := day - int(now.Weekday())
-		fmt.Printf("Adjusting Day by %d Days.\n", days)
-		offset = days*24 + offset
-	}
 	//Find and update, or add new user record
 	index := tc.findUserListingIndex(m.Author.ID)
 	var record turnipPrice
