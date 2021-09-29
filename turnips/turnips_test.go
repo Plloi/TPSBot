@@ -3,7 +3,7 @@ package turnips
 import (
 	"testing"
 
-	"github.com/Plloi/Junior/router"
+	"github.com/Plloi/pdb-cmdr/pkg/router"
 )
 
 func TestSetup(t *testing.T) {

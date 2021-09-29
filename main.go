@@ -7,8 +7,8 @@ import (
 	"os/signal"
 	"syscall"
 
-	"github.com/Plloi/Junior/router"
 	"github.com/Plloi/TPSBot/turnips"
+	"github.com/Plloi/pdb-cmdr/pkg/router"
 	"github.com/bwmarrin/discordgo"
 )
 
@@ -33,8 +33,7 @@ func main() {
 		return
 	}
 
-	Router = router.NewCommandRouter()
-	Router.CommandPrefix = "t!"
+	Router = router.NewCommandRouterWithPrefix("t!")
 	Router.RegisterCommand("prefix", "Sets the bot command prefix (Admin Locked)", Router.SetPrefix)
 
 	//Import commands module

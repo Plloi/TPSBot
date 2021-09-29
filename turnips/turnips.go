@@ -9,14 +9,14 @@ import (
 	"strings"
 	"time"
 
-	"github.com/Plloi/Junior/router"
+	"github.com/Plloi/pdb-cmdr/pkg/router"
 	"github.com/bwmarrin/discordgo"
 	"github.com/sdomino/scribble"
 )
 
-func notImplemented(s *discordgo.Session, m *discordgo.MessageCreate) {
-	s.ChannelMessageSend(m.ChannelID, "Command reserved, but not implemented")
-}
+// func notImplemented(s *discordgo.Session, m *discordgo.MessageCreate) {
+// 	s.ChannelMessageSend(m.ChannelID, "Command reserved, but not implemented")
+// }
 
 // TurnipCommands Holds state form the Turnip Bot
 type TurnipCommands struct {
@@ -184,7 +184,7 @@ func (tc *TurnipCommands) settime(s *discordgo.Session, m *discordgo.MessageCrea
 	}
 	offset := hour - now.Hour()
 
-	day, _ := daysOfWeek[matches[1]]
+	day := daysOfWeek[matches[1]]
 
 	days := day - now.Weekday()
 	fmt.Printf("Adjusting Day by %d Days.\n", days)
@@ -217,15 +217,6 @@ func (tc *TurnipCommands) checktime(s *discordgo.Session, m *discordgo.MessageCr
 
 	s.ChannelMessageSend(m.ChannelID, fmt.Sprintf("%s I think your game time is %s", m.Author.Mention(), playertime.Format("Monday 3PM")))
 
-}
-
-func (tc *TurnipCommands) alertme(s *discordgo.Session, m *discordgo.MessageCreate) {
-	testtime := time.Now()
-	s.ChannelMessageSend(m.ChannelID, fmt.Sprintf("Time now: %s", testtime))
-	user := tc.prices[tc.findUserListingIndex(m.Author.ID)]
-	testtime = time.Date(testtime.Year(), testtime.Month(), testtime.Day(), testtime.Hour()+user.TimeOffset, testtime.Minute(), testtime.Second(), testtime.Nanosecond(), testtime.Location())
-	s.ChannelMessageSend(m.ChannelID, fmt.Sprintf("Time Offset: %s", testtime))
-	notImplemented(s, m)
 }
 
 func (tc *TurnipCommands) findUserListingIndex(id string) int {
@@ -296,16 +287,7 @@ func (tc *TurnipCommands) sellAlert(s *discordgo.Session, m *discordgo.MessageCr
 
 func (tc *TurnipCommands) sendAlert(s *discordgo.Session, m *discordgo.MessageCreate, SourceUser turnipPrice) {
 	// Loop the list looking for best buy and sell prices
-	memberList := make(map[string]*discordgo.Member)
-
-	Server, _ := s.Guild(m.GuildID)
-	for _, Member := range Server.Members {
-		if Member.Nick == "" {
-			Member.Nick = Member.User.Username
-		}
-		memberList[Member.User.ID] = Member
-	}
-
+	memberList := getUserMapForGuild(s, m.GuildID)
 	msg := ""
 
 	for _, User := range tc.prices {
@@ -339,7 +321,19 @@ func (tc *TurnipCommands) sendAlert(s *discordgo.Session, m *discordgo.MessageCr
 }
 
 func (tc *TurnipCommands) debugLog(logentry string) {
-	if tc.debug == true {
+	if tc.debug {
 		fmt.Printf("%s: %s", time.Now(), logentry)
 	}
+}
+
+func getUserMapForGuild(s *discordgo.Session, gID string) (memberList map[string]*discordgo.Member) {
+	memberList = make(map[string]*discordgo.Member)
+	Server, _ := s.Guild(gID)
+	for _, Member := range Server.Members {
+		if Member.Nick == "" {
+			Member.Nick = Member.User.Username
+		}
+		memberList[Member.User.ID] = Member
+	}
+	return
 }
